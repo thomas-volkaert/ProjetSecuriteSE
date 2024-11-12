@@ -1,0 +1,28 @@
+Introduction :
+    Sur chaque système d’exploitation, il est possible de placer un malware pouvant corrompre le système. C’est le
+    plus gros fardeau que l’on puisse avoir et les anti-virus ne nous protègent malheureusement pas de tout. Pour
+    prendre conscience des possibilités d’un malware et les risques vis à vis du système d’exploitation rien de mieux
+    que de créer le vôtre.
+Consigne :
+    Création d’une charge malveillante en python.
+        Python vous permettra de vous concentrer sur la logique du malware plutôt que sur le langage de programmation.
+    Votre malware devra exfiltrer de la donnée.
+        Cela permet de se rendre compte des logs laissé sur un système lors d’envoi de donnée.
+    Effacer les logs des journaux d’événement.
+        Vous serez en mesure de maîtrisé l’emplacement des logs dans un système Windows.
+    S’exécuter à chaque démarrage.
+        L’ensemble des attaques sur un système vise à être persistant, il semble logique d’étudier ce cas de figure.
+
+Contexte :
+    Machine cible : Windows 10
+        La grande majorité du marché est sur ce système d’exploitation. Garder à l’esprit que la logique d’attaque est la même quel que
+        soit le système.
+    Antivirus & Real Time protection : désactivé
+        Il est ambitieux à l’heure actuelle de vouloir by-pass les systèmes de protection actuelle, rendez l’an prochain.
+
+Bonus :
+    Chaque action supplémentaire effectuée par le malware sera pris en considération dans la note.
+Évaluation :
+    Type de rendu : soutenance | Démo.
+    Équipe : 3 personnes par groupe.
+    Environnement de travail GitHub
