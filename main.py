@@ -17,6 +17,7 @@ url = "http://localhost:8000"
 destination_folder = r"/Users/Thomas/Documents/GitHub/ProjetSecuriteSE/"
 
 def uploadServer(filename):
+    """Prend en entree un nom de fichier, upload ce fichier sur un serveur"""
     filepath = os.path.abspath(filename)
     with open(filepath, "rb") as file:
         # Use the files parameter to send the file
@@ -69,16 +70,6 @@ def clear_command_history():
     except Exception as e:
         print(f"Erreur lors de la suppression de l'historique des commandes: {e}")     
  
-#clipboard_content = get_clipboard_content()
-
-# if len(clipboard_content) <= 12:
-#     print("Contenu du presse-papiers:", clipboard_content)
-#     # Stocker le contenu dans un fichier texte
-#     with open("pp.txt", "w") as file:
-#         file.write(clipboard_content)
-#         print("Le contenu du presse-papiers a été sauvegardé dans 'presse_papiers.txt'")
-# else:
-#     print("Presse-papiers trop long")
 
 ############################################################
 
